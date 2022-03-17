@@ -1,25 +1,65 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "./App.css";
 
-function App() {
+const App = () => {
+  const [data, setData] = useState(null);
+  const fetchData = () => {
+    fetch("https://dev.dashmed.in/sample-data")
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        setData(data.data);
+      });
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+  const clicked = () => {
+    toast.success("List item clicked");
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <h2
+        style={{ textAlign: "center", marginBottom: "60px", marginTop: "60px" }}
+      >
+        <u>MEDICINES</u>
+      </h2>
+      <div className="test">
+        {data ? (
+          data.length > 0 && (
+            <ul>
+              {data.map((d, ind) => (
+                <li
+                  class="list-group-item list-group-item-action"
+                  key={ind}
+                  onClick={clicked}
+                >
+                  <div>
+                    <b>
+                      <u>{d.medName}</u>
+                    </b>
+                  </div>
+                  <ul type="square">
+                    {d.saltName.split("+").map((slt, i) => (
+                      <li key={i}>{slt}</li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+          )
+        ) : (
+          <div>Loading...</div>
+        )}
+        <ToastContainer pauseOnFocusLoss={false} />
+      </div>
+    </>
   );
-}
+};
 
 export default App;
